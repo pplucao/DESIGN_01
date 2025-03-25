@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario editavel</title>
+    <meta name="description" content="Formulário editável que permite a geração de um novo formulário">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+        header {
+            position: sticky;
+            width: 100%;
+            z-index: 80;
+        }
+        body {
+            background-image: url(woman.png);
+            color: aliceblue;
+            background-size: cover; /* A imagem cobre toda a tela */
+            background-position: center; /* Centraliza a imagem */
+            background-repeat: no-repeat; /* Evita repetição da imagem */
+        }
+
+        main {
+            display: flex; /* facilitar alinhamento dos itens do formulario*/
+            justify-content: center;
+            margin-top: 5px; /* Ajuste a margem para evitar sobreposição com o header */
+        }
+
+        button.btn.btn-outline-success:hover {
+            background-color: #682085; 
+            color: white; /* Cor do texto ao passar o mouse */
+        }
+        button.btn.btn-outline-success {
+            background-color: #5a4ae4; /* Exemplo: azul */
+            color: white; /* Cor do texto ao passar o mouse */
+        }
+
+        #titulo-formulario {
+            position: sticky;
+            top: 0;
+            padding: 10px; /* Adiciona um espaço interno */
+            z-index: 10; /* Garante que o título fique acima do conteúdo */
+        }       
+
+        #container-formularios {
+            display: flex; /* Dispor os formulários lado a lado */
+            width: 1600px; /* Largura total dos formulários (800px cada) */
+            justify-content: center; /* Centralizar os formulários horizontalmente */
+        }
+
+        
+        /*formulario de personalização */
+        #editor {
+            width: auto;
+            min-width: 400px;
+            height: 700px;
+            padding: 20px; /*espaço da borda */                
+            background-color: rgba(255, 255, 255, 0.5); /*fundo meio transparente */
+            margin-top: 10%; /*distancia da header */
+            border-radius: 10px;
+        }
+        
+        .campo-editor input,
+        .campo-editor select,
+        .campo-editor button {
+            width: 100%; /*garantir que os campos ocupem todo o espaço */
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /*botao de adicionar campo */
+        .botao-redondo {
+        border-radius: 5px;
+        padding: 10px;
+        border: none;
+        font-size: 16px; /* Ajuste o tamanho da fonte conforme necessário */
+        }
+
+        .botao-redondo:hover{ /* ação do botão ao passar o mouse */
+            background-color: #2c0b39;
+            color: #ccc;
+        }
+        
+        /* distancia dos itens do formulario editável */
+        .campo-editor {
+            margin-bottom: 10px;
+        }
+
+        .campo-editor label {
+            display: block; /*ocupando toda a largura do elemento pai */
+            margin-bottom: 5px; /*espaçamento entre os inputs */
+            
+        }
+
+        /*diminui os inputs de cor de letra e cor de fundo */
+        .campo-editor input[type="color"]{
+            height: 15px;
+        }
+        
+        /*formulario criado */
+        #formulario {
+            display: flex;
+            flex-direction: column; 
+            width: auto;
+            min-width: 400px;
+            padding: 20px;  
+            overflow-y: auto;
+            border-radius: 10px;
+            margin-top: 10%;
+        }
+
+
+        .campo-formulario {
+            display: flex;
+           
+        }
+
+        .campo-formulario select,
+        .campo-formulario input {
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }       
+
+        /*botao de exclusao */
+        .excluir-campo {
+            border-radius: 5px;
+            margin-left: 5px;
+            cursor: pointer;
+            background-color: rgb(186, 86, 209);
+        }
+        .excluir-campo:hover {
+            background-color: #230e23;
+            color: #ffffff;
+        }
+
+        .meu-footer {
+            display: flex;
+            flex-direction: column;
+            margin-top: 50px; /*distancia do body */
+            width: 100%;
+            background-color: #230e23; 
+            color: white; 
+            padding: 20px;
+            box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+        }
+
+        .meu-footer .newsletter {
+            display: flex;
+            justify-content: center; /* Centraliza os elementos horizontalmente */
+            align-items: center; /* Centraliza os elementos verticalmente */
+            margin-bottom: 20px; /* Espaço entre as seções */
+        }
+
+        .meu-footer .newsletter input[type="text"] {
+            padding: 10px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .meu-footer .newsletter button {
+            padding: 10px 10px;
+            background-color: #555; /* Cor do botão */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .meu-footer .copyright {
+            text-align: center; /* Centraliza o texto de copyright */
+        }       
+
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+     <header>
+         <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="#">
+                <img src="logo.png" width="70" height="70" class="d-inline-block align-top" alt="">
+            </a>
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="pesquisa" aria-label="Pesquisar">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Pesquisar</button>
+              </form>
+        </nav>
+     </header>
+    <main>
+
+        <!-- Editor do formulário -->
+        <div id="container-formularios">
+            <div id="editor">
+                <h3>Personalização do formulário</h3>
+                <div class="campo-editor">
+                    <label for="nome-formulario">Nome do Formulário:</label>
+                    <input type="text" id="nome-formulario">
+                </div>
+
+            <div class="campo-editor">
+                <label for="cor-letra">Cor da Letra:</label>
+                <input type="color" id="cor-letra">
+            </div>
+
+            <div class="campo-editor">
+                <label for="cor-fundo">Cor do Fundo:</label>
+                <input type="color" id="cor-fundo">
+            </div>
+
+            <!-- Adicionar campos-->
+            <h4>Adicionar Campos</h4>
+            <div class="campo-editor">
+                <label for="tipo-campo">Tipo de Campo:</label>
+                <select id="tipo-campo">
+                    <option value="text">Texto</option>
+                    <option value="tel">Telefone</option>
+                    <option value="name">Nome</option>
+                    <option value="date">Data</option>
+                    <option value="radio">Radio</option>
+                    <option value="select">Seleção</option>
+               </select>
+           </div>
+
+           <div class="campo-editor" id="opcoes-select" style="display: none;">
+            <label for="opcao1">Opção 1:</label>
+            <input type="text" id="opcao1" value="Opção 1">
+
+            <label for="opcao2">Opção 2:</label>
+            <input type="text" id="opcao2" value="Opção 2">
+            </div>
+
+           <div class="campo-editor">
+            <label for="bordas">Bordas do formulário: </label>
+            <input type="text" id="bordas" placeholder="Ex: 1px solid black">
+           </div>
+
+           <div class="campo-editor">
+            <label for="nome-campo">Nome do Campo:</label>
+            <input type="text" id="nome-campo">
+           </div>
+
+           <div class="campo-editor">
+            <label for="cor-campo">Cor do Campo:</label>
+            <input type="color" id="cor-campo">
+           </div>
+
+           <div class="campo-editor">
+            <button onclick="adicionarCampo()" class="botao-redondo">Adicionar Campo</button>
+           </div>
+         </div>
+
+         <div id="formulario">
+            <h2 id="titulo-formulario"></h2>
+         </div>
+        </div>
+
+        <!-- Criando o novo formulário-->
+        <script>
+            const formulario = document.getElementById('formulario')
+            const nomeFormulario = document.getElementById("nome-formulario");
+            const corLetra = document.getElementById('cor-letra');
+            const corFundo = document.getElementById('cor-fundo');
+            const tipoCampo = document.getElementById('tipo-campo');
+            const bordas = document.getElementById('bordas');
+            const nomeCampo = document.getElementById('nome-campo');
+            const corCampo = document.getElementById('cor-campo');
+            const campoEditor = document.getElementById('campo-editor');
+            const opcoesSelect = document.getElementById('opcoes-select');
+            const opcao1 = document.getElementById('opcao1');
+            const opcao2 = document.getElementById('opcao2');
+            const tituloFormulario = document.getElementById('titulo-formulario');
+            
+            tipoCampo.addEventListener('change', function() { //criação de evento para mostrar div
+                if (tipoCampo.value === 'select') {
+                    opcoesSelect.style.display = 'block'; // Mostra o div
+                } else {
+                    opcoesSelect.style.display = 'none'; // Oculta o div
+                    }
+                });
+
+                //adiciona evento aos inputs => atualiza valores dos inputs
+            nomeFormulario.addEventListener('input', atualizarFormulario);
+            corLetra.addEventListener('input', atualizarFormulario);
+            corFundo.addEventListener('input', atualizarFormulario);
+            bordas.addEventListener('input', atualizarFormulario);
+            corCampo.addEventListener('input', atualizarFormulario);
+            
+
+            function atualizarFormulario() {
+            tituloFormulario.textContent = nomeFormulario.value;
+            tituloFormulario.style.color = corLetra.value;
+            formulario.style.backgroundColor = corFundo.value;
+            formulario.style.border = bordas.value;
+            formulario.style.color = corCampo.value;
+            }
+
+            function adicionarCampo(){
+                const campoFormulario = document.createElement('div');
+                campoFormulario.className = 'campo-formulario';
+                const label = document.createElement('label');
+                label.textContent = nomeCampo.value + ':';
+
+                let input; 
+
+                if (tipoCampo.value === 'select') {
+                input = document.createElement('select');
+
+                // Adicione opções ao select aqui, se necessário
+                const option1 = document.createElement('option');
+                option1.value = opcao1.value; // Use o texto como valor
+                option1.textContent = opcao1.value; //Define o que aparecerá para o usuário
+                input.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = opcao2.value; // Use o texto como valor
+                option2.textContent = opcao2.value; //Define o que aparecerá para o usuário
+                input.appendChild(option2);
+            } else {
+                  input = document.createElement('input');
+                  input.type = tipoCampo.value;
+                }
+
+                //Adiciona restrições com base no tipo de campo
+                switch (tipoCampo.value) {
+                    case 'text':
+                        input.setAttribute('oninput', 'this.value = this.value.replace(/[^a-zA-Z\s]/g, "")');
+                break;
+                case 'name':
+                        input.setAttribute('oninput', 'this.value = this.value.replace(/[^a-zA-Z\s]/g, "")');
+                break;
+                    case 'tel':
+                        input.setAttribute('maxlength', '11');
+                        input.setAttribute('oninput', 'this.value = this.value.replace(/[^0-9]/g, "")');
+                break;
+                }
+
+                const botaoExcluir = document.createElement('button');
+                botaoExcluir.textContent = 'Excluir';
+                botaoExcluir.className = 'excluir-campo';
+                botaoExcluir.onclick = function() {
+                    campoFormulario.remove();
+                }
+
+                campoFormulario.appendChild(label);
+                campoFormulario.appendChild(input);
+                campoFormulario.appendChild(botaoExcluir);
+                formulario.appendChild(campoFormulario);
+            };
+        </script>
+    </main>
+    
+    <footer class="meu-footer">
+        <div class="newsletter">
+            <span>Envie sua pergunta </span>
+            <input type="text" placeholder="Dúvida">
+            <button>ENVIAR</button>
+        </div>
+        <div class="copyright">
+            <span>© 2025 Copyright: robotform@gmail.com</span>
+        </div>
+    </footer>
+    
+</body>
+</html>
