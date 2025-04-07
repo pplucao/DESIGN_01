@@ -199,6 +199,11 @@
                     <input type="text" id="nome-formulario">
                 </div>
 
+                <div class="campo-editor">
+                    <label for="tamanho-nome">Tamanho do Nome:</label>
+                    <input type="range" id="tamanho-nome">
+                </div>  
+
             <div class="campo-editor">
                 <label for="cor-letra">Cor da Letra:</label>
                 <input type="color" id="cor-letra">
@@ -260,6 +265,7 @@
         <script>
             const formulario = document.getElementById('formulario')
             const nomeFormulario = document.getElementById("nome-formulario");
+            const tamanhoNome = document.getElementById('tamanho-nome');
             const corLetra = document.getElementById('cor-letra');
             const corFundo = document.getElementById('cor-fundo');
             const tipoCampo = document.getElementById('tipo-campo');
@@ -282,6 +288,7 @@
 
                 //adiciona evento aos inputs => atualiza valores dos inputs
             nomeFormulario.addEventListener('input', atualizarFormulario);
+            tamanhoNome.addEventListener('input', atualizarFormulario);
             corLetra.addEventListener('input', atualizarFormulario);
             corFundo.addEventListener('input', atualizarFormulario);
             bordas.addEventListener('input', atualizarFormulario);
@@ -290,6 +297,7 @@
 
             function atualizarFormulario() {
             tituloFormulario.textContent = nomeFormulario.value;
+            tituloFormulario.style.fontSize = tamanhoNome.value + 'px';
             tituloFormulario.style.color = corLetra.value;
             formulario.style.backgroundColor = corFundo.value;
             formulario.style.border = bordas.value;
